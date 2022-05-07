@@ -8,3 +8,5 @@
 2. Si un obstáculo toca a la rana, le quita un punto
 3. Si regresa a 0 puntos, pierde el juego
 4. Si la rana se cae en el mar, pierde el juego
+
+### Referencias

@@ -278,8 +278,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c7dc4fd8ef344e4fb3a3b18698e2d22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wayPoint01: {fileID: 0}
-  wayPoint02: {fileID: 0}
+  point1: {fileID: 0}
+  point2: {fileID: 0}
   moveSpeed: 1
   attackRange: 0.5
   projectile: {fileID: 1542411921237037059, guid: 4d53df770d8f149158832301df860b73, type: 3}

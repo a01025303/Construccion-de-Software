@@ -1,78 +1,88 @@
+/*
+Code used for an enemy that moves from one point to another
+If player enters the attack range, the enemy will stop moving 
+and shoot projectiles
+
+Ana Paula Katsuda, Mateo Herrera & Gerardo Gutiérrez
+*/
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Enemy1 : MonoBehaviour
 {
-    public Transform wayPoint01, wayPoint02;
-    private Transform wayPointTarget;
+    // Limits for enemy movement (2 points)
+    public Transform point1, point2;
+    // Determine which point is the target
+    private Transform pointTarget;
+    // Determine move speed 
     [SerializeField] private float moveSpeed;
-
+    // Determine attack range (distance)
     [SerializeField] private float attackRange;
-    private SpriteRenderer sp;//MARKER replace with localScale later
+    // Enemy's projectile
     public GameObject projectile;
-    private Transform target;
+    // Projectile's target
+    private Transform projectileTarget;
+    // From where the projectile will be shot
     public Transform firePoint;
-    private float lifeTimer = 0.0f;
-    [SerializeField] private float maxLife;
+    // Timer to allow shots
+    private float timer = 0.0f;
+    // Time in between shots
+    [SerializeField] private float maxTime;
 
     private void Start()
     {
-        wayPointTarget = wayPoint01;
-        sp = GetComponent<SpriteRenderer>();
-
-        //anim = GetComponent<Animator>();
-        target = GameObject.FindGameObjectWithTag("Main Character").GetComponent<Transform>();
+        // The first point target will be point1
+        pointTarget = point1;
+        // The projectile target will be the main character
+        projectileTarget = GameObject.FindGameObjectWithTag("Main Character").GetComponent<Transform>();
     }
 
     private void Update()
     {
-        lifeTimer += Time.deltaTime;
-        if(Vector2.Distance(transform.position, target.position) >= attackRange)
+        // Increase timer in each frame
+        timer += Time.deltaTime;
+        // If distance between player and enemy is higher than attackRange
+        if(Vector2.Distance(transform.position, projectileTarget.position) >= attackRange)
         {
-            //anim.SetBool("isAttack", false);
+            // Call patrol function to make enemy move side to side
             Patrol();
         }
+        // If distance is lower than attackRange
         else
         {
-            if(lifeTimer >= maxLife)
+            // If timer gets close to maxTime
+            if(timer >= maxTime)
             {
+                // Allow call to Shot function
                 Shot();
-                lifeTimer = 0.0f;
+                // Restart timer
+                timer = 0.0f;
             }
-            
-            //anim.SetBool("isAttack", true);
-            
         }
     }
 
+    // Function to make enemy move from a point to another
     private void Patrol()
     {
-        /*
-
-        //MARKER ONLY FOR TEST
-        if(Input.GetKeyDown(KeyCode.Space))
+        // Move towards pointTarget at moveSpeed
+        transform.position = Vector2.MoveTowards(transform.position, pointTarget.position, moveSpeed * Time.deltaTime);
+        // When really close to point1
+        if(Vector2.Distance(transform.position, point1.position) < 0.01f)
         {
-            GetComponentInChildren<HealthBar>().hp -= 70;
-        }*/
-
-        transform.position = Vector2.MoveTowards(transform.position, wayPointTarget.position, moveSpeed * Time.deltaTime);
-
-        if(Vector2.Distance(transform.position, wayPoint01.position) < 0.01f)
-        {
-            wayPointTarget = wayPoint02;
-
-            //sp.flipX = true;
+            // Change pointTarget to point2
+            pointTarget = point2;
+            // Change sprite direction (to match movement)
             Vector3 localTemp = transform.localScale;
             localTemp.x *= -1;
             transform.localScale = localTemp;
         }
-
-        if (Vector2.Distance(transform.position, wayPoint02.position) < 0.01f)
+        // When really close to point 2
+        if (Vector2.Distance(transform.position, point2.position) < 0.01f)
         {
-            wayPointTarget = wayPoint01;
-
-            //sp.flipX = false;
+            // Change pointTarget to point1
+            pointTarget = point1;
+             // Change sprite direction (to match movement)
             Vector3 localTemp = transform.localScale;
             localTemp.x *= -1;
             transform.localScale = localTemp;
@@ -81,10 +91,10 @@ public class Enemy1 : MonoBehaviour
 
 
 
-    //CORE This function will be added on the Animation window "Attack Animation X Frame"
+    // Function to shoot projectile 
     public void Shot()
     {
-            Instantiate(projectile, firePoint.position, Quaternion.identity);
-        
+        // Create projectile 
+        Instantiate(projectile, firePoint.position, Quaternion.identity);
     }
 }

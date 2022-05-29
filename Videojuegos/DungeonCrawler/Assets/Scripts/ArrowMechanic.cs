@@ -1,113 +1,150 @@
+/*
+Code used to define the mechanics of the arrow = throw it and call it back
+And to define the arrow's damage to destruct enemies
+
+Ana Paula Katsuda, Mateo Herrera & Gerardo Gutiérrez
+*/
+
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ArrowMechanic : MonoBehaviour
 {
-    // determine the speed of the arrow
-    [SerializeField] private float moveSpeed; 
-    // Target position (mouse position)
-    private Vector3 targetPos;
-    // Boolean used to control click information
+    // Determine the arrow speed
+    [SerializeField] private float arrowSpeed; 
+    // Mouse position that will be the target position
+    private Vector3 mouseTargetPos;
+    // Control click information
     private bool isClicked;
-
-    private Transform playerTrans;
-    private bool canComeBack;//default is false
-    private bool returnWeapon;
-    private Transform weaponTrans;
-
+    // Get tranform from the MainCharacter
+    private Transform mainCharacterTrans;
+    // Define if arrow is allowed to come back
+    private bool canReturn;
+    // Used to call function that returns arrow
+    private bool returnArrow;
+    // Define if arrow can damage enemies (no damage if arrow is just still)
+    private bool canDamage;
+    // Allow target visualization through crosshair
     public GameObject crosshairs;
+    // Indicate the position of the mouse (target)
     private Vector3 target; 
 
 
     // Start is called before the first frame update
     void Start()
     {
-        playerTrans = GameObject.FindGameObjectWithTag("Main Character").GetComponent<Transform>();
+        // Obtain the main character through its tag
+        mainCharacterTrans = GameObject.FindGameObjectWithTag("Main Character").GetComponent<Transform>();
     }
     // Update is called once per frame
     void Update()
     {
+        // Obtain position through mouse movement
         target = Camera.main.ScreenToWorldPoint(new Vector3(Input.mousePosition.x, Input.mousePosition.y, transform.position.z)); 
+        // Move crosshairs according to target
         crosshairs.transform.position = new Vector2(target.x , target.y);
         
+        // If  mouse is clicked and clicked information is false
         if (Input.GetMouseButtonDown(0) && isClicked == false)
         {
+            // Update click information
             isClicked = true;
-            targetPos = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
-                                         Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);//MARKER SAVE the TARGET Position
+            // Save the target position in mouseTargetPos
+            mouseTargetPos = new Vector3(Camera.main.ScreenToWorldPoint(Input.mousePosition).x,
+                                         Camera.main.ScreenToWorldPoint(Input.mousePosition).y, 0);
         } 
-
+        // If clicked information is true
         if(isClicked)
         {
-            ThrowArrow();//MARKER If click, Throw the weapon
+            // Call ThrowArrow function to throw the arrow
+            ThrowArrow();
         }
 
-        if(Vector2.Distance(transform.position, targetPos) <= 0.01f)
+        // If the distance between the arrow and target position is small
+        if(Vector2.Distance(transform.position, mouseTargetPos) <= 0.01f)
         {
-            //isRotating = false;
-            isClicked = false;//MARKER STEP 03 you can click again Or you can choose to delet this line which makes your weapon come back by press space bar
-            canComeBack = true;
-            //isDamage = false;//FIXME isDamage
+            // Indicate that arrow can now return
+            canReturn = true;
+            // Arrow can't damage while it's not moving
+            canDamage = false;
         }
 
-        if(Input.GetMouseButtonDown(0) && canComeBack)
+        // If mouse clicked and can return is true
+        if(Input.GetMouseButtonDown(0) && canReturn)
         {
-            returnWeapon = true;
-            //isDamage = true;//FIXME isDamage
+            // Activate posibility of arrow return
+            returnArrow = true;
+            // Indicate that arrow can damage again
+            canDamage = true;
         }
 
-        if(returnWeapon)
+        // if returnArrow is true
+        if(returnArrow)
         {
+            // Call BackArrow function to make it return
             BackArrow();
         }
 
-        if (Vector2.Distance(transform.position, playerTrans.position) <= 0.01f)
+        // If distance between arrow and main character is small
+        if (Vector2.Distance(transform.position, mainCharacterTrans.position) <= 0.01f)
         {
-            //isRotating = false;
-            canComeBack = false;
-            returnWeapon = false;
+            // Can't return as it has already returned
+            canReturn = false;
+            returnArrow = false;
+            // Reset click to false
             isClicked = false;
-            //isDamage = false;//FIXME isDamage
-
-            //transform.rotation = new Quaternion(0, 0, 0, 0);//MARKER MAKING SURE the weapon is correct direction
+            // Can't damage while being with the main character
+            canDamage = false;
         }
     }
 
+    // Function to throw arrow
     private void ThrowArrow()
     {
-        Vector3 difference = targetPos - playerTrans.transform.position;
+        // Get the difference between the target position and the main character
+        Vector3 difference = mouseTargetPos - mainCharacterTrans.transform.position;
+        // Set the rotation value using Mathf
         float rotationZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
-        transform.position = Vector2.MoveTowards(transform.position, targetPos, moveSpeed * Time.deltaTime);
+        // Make arrow move towards mouse target at arrowSpeed
+        transform.position = Vector2.MoveTowards(transform.position, mouseTargetPos, arrowSpeed * Time.deltaTime);
+        // Set rotation to point to mouse target using rotationZ
         transform.rotation = Quaternion.Euler(0.0f, 0.0f, rotationZ);
-        //isDamage = true;//FIXME isDamage
-
+        // Allow Damage
+        canDamage = true;
+        // Detach arrow from main character
         transform.SetParent(null);
     }
 
+    // Function to call arrow back
     private void BackArrow()
     {
-        Vector3 difference = playerTrans.transform.position - transform.position;
+        // Get the distance between the main character and the arrow
+        Vector3 difference = mainCharacterTrans.transform.position - transform.position;
+        // Set rotation to point to main character with Mathf
         float rotationZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
-        //isRotating = true;
-        transform.position = Vector2.MoveTowards(transform.position, playerTrans.position, moveSpeed * 2 * Time.deltaTime);
-        transform.SetParent(playerTrans);
+        // Move arrow towards player
+        transform.position = Vector2.MoveTowards(transform.position, mainCharacterTrans.position, arrowSpeed * 2 * Time.deltaTime);
+        // Attach arrow to main character 
+        transform.SetParent(mainCharacterTrans);
+        // Set rotation to point to main character
         transform.rotation = Quaternion.Euler(0.0f, 0.0f, rotationZ);
-        
-
-        //STEP 05
-        /*if (Vector2.Distance(transform.position, playerTrans.position) <= 0.01f)
-        {
-            StartCoroutine(ComeBackEffect());
-            Instantiate(weaponReturnEffect, playerTrans.position, Quaternion.identity);
-        }*/
     }
 
+    // Set arrow collisions to damage enemies
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if(other.gameObject.tag == "Enemy")
+        // If arrow touches enemy and is allowed to damage
+        if(other.gameObject.tag == "Enemy" && canDamage)
         {
+            // Substract points from the enemies health points
+            // Using get component in children to access HealthBar
             other.GetComponentInChildren<HealthBar>().hp -= 15;
+            // If the health points are equal or lower to 0
+            if(other.GetComponentInChildren<HealthBar>().hp <= 0)
+                // Destroy enemy
+                Destroy(other.gameObject);
         }
     }
 }

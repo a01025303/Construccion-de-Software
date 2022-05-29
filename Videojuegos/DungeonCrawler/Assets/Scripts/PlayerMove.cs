@@ -32,6 +32,7 @@ public class PlayerMove : MonoBehaviour
 
         Vector3 mouse = Input.mousePosition; 
         Vector3 screenPoint = Camera.main.WorldToScreenPoint(transform.localPosition); 
+        Debug.Log(movement);
     }
 
     void freeze()

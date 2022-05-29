@@ -10,7 +10,7 @@ public class EnemyWeapon2 : MonoBehaviour
     private Vector3 targetPos;
 
     private float lifeTimer;
-    [SerializeField] private float maxLife = 2.0f;
+    [SerializeField] private float maxLife = 3.0f;
 
     // Start is called before the first frame update
     void Start()

@@ -9,6 +9,7 @@ using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
 {
+    public float mainCharacterSpeed = 1; 
     // Camera
     public Camera theCam; 
     // Movement vector
@@ -34,7 +35,7 @@ public class PlayerMove : MonoBehaviour
         animator.SetFloat("Magnitude", movement.magnitude);
 
         // Change position 
-        transform.position = transform.position + movement * Time.deltaTime;
+        transform.position = transform.position + movement * Time.deltaTime * mainCharacterSpeed;
 
         // Get mouseposition
         Vector3 mouse = Input.mousePosition; 

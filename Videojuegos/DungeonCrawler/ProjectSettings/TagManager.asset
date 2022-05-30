@@ -9,6 +9,7 @@ TagManager:
   - Arrow
   - Main Character
   - Enemy
+  - Health
   layers:
   - Default
   - TransparentFX

@@ -19,7 +19,7 @@ public class HealthBar : MonoBehaviour
     // Health points
     [HideInInspector] public float hp;
     // Maximum possible health points
-    [SerializeField] private float maxHp;
+    [SerializeField] public float maxHp;
     // Hurt speed
     [SerializeField] private float hurtSpeed = 0.005f;
 

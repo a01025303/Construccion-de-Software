@@ -37,5 +37,17 @@ public class Enemy2 : MonoBehaviour
         if(mainCharacterTrans.position.x < transform.position.x)
             // Set sprite to look to left
             sprite.flipX = true;
+        // If enemy is really close to player
+    }
+
+    // If enemy touches main character
+     private void OnTriggerEnter2D(Collider2D other)
+    {
+        // If enemy touches main character
+        if(other.gameObject.tag == "Main Character")
+        {
+            // Substract health points from Main Character
+            other.GetComponentInChildren<HealthBar>().hp -= 30;
+        }
     }
 }

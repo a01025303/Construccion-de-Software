@@ -18,7 +18,7 @@ public class ArrowMechanic : MonoBehaviour
     private Vector3 mouseTargetPos;
     // Control click information
     private bool isClicked;
-    // Get tranform from the MainCharacter
+    // Get transform from the MainCharacter
     private Transform mainCharacterTrans;
     // Define if arrow is allowed to come back
     private bool canReturn;
@@ -30,6 +30,7 @@ public class ArrowMechanic : MonoBehaviour
     public GameObject crosshairs;
     // Indicate the position of the mouse (target)
     private Vector3 target; 
+    [SerializeField] private GameObject healthFlask; 
 
 
     // Start is called before the first frame update
@@ -143,8 +144,11 @@ public class ArrowMechanic : MonoBehaviour
             other.GetComponentInChildren<HealthBar>().hp -= 15;
             // If the health points are equal or lower to 0
             if(other.GetComponentInChildren<HealthBar>().hp <= 0)
+            {
                 // Destroy enemy
+                Instantiate(healthFlask, other.transform.position, Quaternion.identity);
                 Destroy(other.gameObject);
+            }
         }
     }
 }

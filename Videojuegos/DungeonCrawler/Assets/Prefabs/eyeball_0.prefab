@@ -281,10 +281,10 @@ MonoBehaviour:
   point1: {fileID: 0}
   point2: {fileID: 0}
   moveSpeed: 1
-  attackRange: 0.5
+  attackRange: 1
   projectile: {fileID: 1542411921237037059, guid: 4d53df770d8f149158832301df860b73, type: 3}
   firePoint: {fileID: 4002515431930542866}
-  maxLife: 0.5
+  maxTime: 0.5
 --- !u!58 &4002515432741099194
 CircleCollider2D:
   m_ObjectHideFlags: 0
